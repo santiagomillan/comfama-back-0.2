@@ -14,17 +14,17 @@ export class AnimeService {
       .get(`https://api.jikan.moe/v4/anime/${id}/full`)
       .toPromise()
       .then((response) => {
-        const data = response.data;
+        const data = response?.data;
         console.log(data); // Imprime los datos
         // Aquí puedes usar los datos
-        if (data && data.relations && data.relations.length > 0) {
+        if (data && data?.relations && data?.relations.length > 0) {
           const relations = data.relations.map((relation) => {
             let mal_ids = [];
-            if (relation.entry) {
-              mal_ids = relation.entry.map((entry) => entry.mal_id);
+            if (relation?.entry) {
+              mal_ids = relation?.entry.map((entry) => entry?.mal_id);
             }
             return {
-              name: relation.relation,
+              name: relation?.relation,
               mal_id: mal_ids,
             };
           });

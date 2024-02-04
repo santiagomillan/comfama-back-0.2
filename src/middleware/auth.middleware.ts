@@ -29,6 +29,6 @@ export class AllowAnyIPMiddleware implements NestMiddleware {
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept',
     );
-    next();
+    next(); 
   }
 }
