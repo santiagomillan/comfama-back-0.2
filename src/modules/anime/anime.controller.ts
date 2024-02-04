@@ -17,7 +17,7 @@ export class AnimeController {
   }
 
   @Get(':id')
-  async getAnimeInfo(@Param('id') id: string) {
+  async getAnimeInfo(@Param('id') id: any) {
     try {
       const apiUrl = `https://api.jikan.moe/v4/anime/${id}/full`;
       const response = await this.httpService.get(apiUrl).toPromise();
@@ -73,7 +73,7 @@ export class AnimeController {
   }
 
   @Get('ranking/:id')
-  async getAnimeInfoRanking(@Param('id') id: string) {
+  async getAnimeInfoRanking(@Param('id') id: any) {
     try {
       const apiUrl = `https://api.jikan.moe/v4/anime/${id}/full`;
       const response = await this.httpService.get(apiUrl).toPromise();
