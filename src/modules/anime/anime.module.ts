@@ -10,5 +10,4 @@ import { HttpModule } from '@nestjs/axios';
     controllers: [AnimeController],
     providers: [AnimeService],
 })
-export class AnimeModule {
-}
+export class AnimeModule {}

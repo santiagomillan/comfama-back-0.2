@@ -4,24 +4,28 @@ import { HttpService } from '@nestjs/axios';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('anime')
-@Controller('api/anime')
+@Controller('api/anime/')
 export class AnimeController {
   constructor(
-    private readonly appService: AnimeService,
+    private animeService: AnimeService,
     private httpService: HttpService,
   ) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    console.log('aca ando');
+    return this.animeService.getHello();
   }
 
   @Get(':id')
-  async getAnimeInfo(@Param('id') id: any) {
+  async getAnimeInfo(@Param('id') id: string) {
+    console.log(id);
     try {
       const apiUrl = `https://api.jikan.moe/v4/anime/${id}/full`;
+      console.log(apiUrl);
       const response = await this.httpService.get(apiUrl).toPromise();
       const data = response.data;
+      console.log(data);
 
       // Llamar al segundo servicio para obtener información adicional
       const additionalInfo = await this.getAdditionalInfo(data);
@@ -71,9 +75,8 @@ export class AnimeController {
 
     return Promise.all(detallesPromises);
   }
-
   @Get('ranking/:id')
-  async getAnimeInfoRanking(@Param('id') id: any) {
+  async getAnimeInfoRanking(@Param('id') id: string) {
     try {
       const apiUrl = `https://api.jikan.moe/v4/anime/${id}/full`;
       const response = await this.httpService.get(apiUrl).toPromise();
@@ -112,23 +115,85 @@ export class AnimeController {
     additionalInfo: any,
   ): Promise<any> {
     const detallesPromises = [];
+    console.log('additionalInfo', additionalInfo);
 
     for (const relacion of additionalInfo.relations) {
-      for (const mal_id of relacion.mal_id) {
-        const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}/full`;
+      console.log(relacion);
+      // Verificar si el campo 'relation' es igual a 'anime'
+      if (relacion.relation !== 'Adaptation') {
+        for (const mal_id of relacion.mal_id) {
+          console.log('id', mal_id);
+          const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}`;
+          console.log(apiUrl);
+          const adicional = await this.httpService.get(apiUrl).toPromise();
+          const data = adicional;
+          console.log(adicional);
 
-        // Agrega un setTimeout de 1 segundo entre solicitudes
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+          // Agrega un setTimeout de 1 segundo entre solicitudes
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        const response = await this.httpService.get(apiUrl).toPromise();
-        const detalles = response.data;
-        const { score } = detalles.data;
+          const response = await this.httpService.get(apiUrl).toPromise();
+          const detalles = response.data;
+          console.log('DETALLES', detalles);
+          const { score } = detalles.data;
 
-        // Agregar al array de promesas un objeto con mal_id, score y relacion
-        detallesPromises.push({ mal_id, score: score });
+          // Agregar al array de promesas un objeto con mal_id, score y relacion
+          detallesPromises.push({ mal_id, score: score });
+        }
       }
     }
 
     return Promise.all(detallesPromises);
   }
+
+  //     for (const relacion of additionalInfo.relations) {
+  //         console.log(relacion)
+
+  //         if (relacion.relation === 'anime') {
+  //             for (const mal_id of relacion.mal_id) {
+  //               console.log("id",mal_id)
+  //               const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}`;
+  //               console.log(apiUrl)
+  //               const adicional = await this.httpService.get(apiUrl).toPromise();
+  //               const data = adicional;
+  //               console.log(adicional)
+
+  //               // Agrega un setTimeout de 1 segundo entre solicitudes
+  //               await new Promise(resolve => setTimeout(resolve, 1000));
+
+  //               const response = await this.httpService.get(apiUrl).toPromise();
+  //               const detalles = response.data;
+  //               console.log('DETALLES',detalles)
+  //               const {score} = detalles.data;
+
+  //               // Agregar al array de promesas un objeto con mal_id, score y relacion
+  //               detallesPromises.push({ mal_id, score: score });
+  //             }
+  //           }
+  //     //   for (const mal_id of relacion.mal_id) {
+  //     //     console.log("id",mal_id)
+  //     //     const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}`;
+  //     //     console.log(apiUrl)
+  //     //     const adicional = await this.httpService.get(apiUrl).toPromise();
+  //     //     const data = adicional;
+  //     //     console.log(adicional)
+
+  //         // const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}`;
+  //         // console.log("URL adicional",apiUrl)
+
+  //         // Agrega un setTimeout de 1 segundo entre solicitudes
+  //         await new Promise(resolve => setTimeout(resolve, 1000));
+
+  //         const response = await this.httpService.get(apiUrl).toPromise();
+  //         const detalles = response.data;
+  //         console.log('DETALLES',detalles)
+  //         const {score} = detalles.data;
+
+  //         // Agregar al array de promesas un objeto con mal_id, score y relacion
+  //         detallesPromises.push({ mal_id, score: score });
+  //       }
+  //     }
+
+  //     return Promise.all(detallesPromises);
+  //   }
 }
