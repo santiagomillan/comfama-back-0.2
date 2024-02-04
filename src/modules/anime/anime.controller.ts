@@ -19,7 +19,7 @@ export class AnimeController {
 
   @Get(':id')
   async getAnimeInfo(@Param('id') id: string) {
-    console.log(id);
+    // console.log(id);
     try {
       const apiUrl = `https://api.jikan.moe/v4/anime/${id}/full`;
       console.log(apiUrl);
@@ -115,16 +115,16 @@ export class AnimeController {
     additionalInfo: any,
   ): Promise<any> {
     const detallesPromises = [];
-    console.log('additionalInfo', additionalInfo);
+    // console.log('additionalInfo', additionalInfo);
 
     for (const relacion of additionalInfo.relations) {
-      console.log(relacion);
+    //   console.log(relacion);
       // Verificar si el campo 'relation' es igual a 'anime'
       if (relacion.relation !== 'Adaptation') {
         for (const mal_id of relacion.mal_id) {
-          console.log('id', mal_id);
+        //   console.log('id', mal_id);
           const apiUrl = `https://api.jikan.moe/v4/anime/${mal_id}`;
-          console.log(apiUrl);
+        //   console.log(apiUrl);
           const adicional = await this.httpService.get(apiUrl).toPromise();
           const data = adicional;
           console.log(adicional);
@@ -134,7 +134,7 @@ export class AnimeController {
 
           const response = await this.httpService.get(apiUrl).toPromise();
           const detalles = response.data;
-          console.log('DETALLES', detalles);
+        //   console.log('DETALLES', detalles);
           const { score } = detalles.data;
 
           // Agregar al array de promesas un objeto con mal_id, score y relacion
